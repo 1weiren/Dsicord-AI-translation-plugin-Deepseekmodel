@@ -22,13 +22,6 @@
 
 ---
 
-## 获取 DeepSeek API Key
-
-1. 打开 https://platform.deepseek.com
-2. 注册账号，充值 1 元（够用很久）
-3. 左侧「API Keys」→ 创建 → 复制 `sk-` 开头的 key
-4. Discord → 设置 → Vencord → Plugins → AiTranslate → 齿轮 → 粘贴 key
-
 ---
 
 ## 源码结构
