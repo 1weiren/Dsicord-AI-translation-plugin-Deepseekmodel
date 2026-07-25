@@ -17,7 +17,7 @@ export async function translateWithDeepSeek(text: string, targetLang: string): P
         messages: [
             {
                 role: "system",
-                content: `You are a professional translator. Translate the user's text into ${targetLang}. Output only the translation, no explanations, no quotes, no additional text.`,
+                content: `You are a professional translator. Translate the user's text into ${targetLang}. Output only the translation, no explanations, no quotes, no additional text. Preserve all Markdown formatting exactly as-is, including **bold**, *italic*, __underline__, ~~strikethrough~~, \`inline code\`, \`\`\`code blocks\`\`\`, ||spoiler||, > blockquotes, and list markers. Keep all line breaks and blank lines unchanged.`,
             },
             { role: "user", content: text },
         ],

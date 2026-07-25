@@ -52,8 +52,10 @@ async function onDoubleClick(e: MouseEvent) {
     const msg = MessageStore.getMessage(ids.channelId, ids.messageId);
     if (!msg?.content) return;
 
-    const currentUserId = UserStore.getCurrentUser()?.id;
-    if (currentUserId && msg.author?.id === currentUserId) return;
+    if (!settings.store.allowSelfTranslate) {
+        const currentUserId = UserStore.getCurrentUser()?.id;
+        if (currentUserId && msg.author?.id === currentUserId) return;
+    }
 
     if (hasTranslation(ids.messageId)) {
         clearTranslation(ids.messageId);

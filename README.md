@@ -18,7 +18,7 @@
 | **Windows** | [AiTranslate-Discord.zip](https://github.com/1weiren/Dsicord-AI-translation-plugin-Deepseekmodel/releases/latest) | 解压 → 双击 `安装.bat` → 重启 Discord |
 | **macOS** | [AiTranslate-Discord-Mac.tar.gz](https://github.com/1weiren/Dsicord-AI-translation-plugin-Deepseekmodel/releases/latest) | 解压 → 双击 `install.command` → 重启 Discord |
 
-详细说明（含申请 API Key、使用、FAQ）在每个压缩包内的 **使用说明.txt**。
+详细说明（使用、FAQ）在每个压缩包内的 **使用说明.txt**。
 
 ---
 

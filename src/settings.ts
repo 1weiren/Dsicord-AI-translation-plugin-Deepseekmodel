@@ -16,8 +16,8 @@ export const settings = definePluginSettings({
     },
     model: {
         type: OptionType.STRING,
-        description: "模型名（默认 deepseek-chat）",
-        default: "deepseek-chat",
+        description: "模型名（默认 deepseek-v4-pro）",
+        default: "deepseek-v4-pro",
     },
     defaultTargetLanguage: {
         type: OptionType.SELECT,
@@ -41,5 +41,10 @@ export const settings = definePluginSettings({
         type: OptionType.BOOLEAN,
         description: "开启边写边译：输入时在输入框上方显示译文，右侧可一键覆盖",
         default: true,
+    },
+    allowSelfTranslate: {
+        type: OptionType.BOOLEAN,
+        description: "允许双击翻译自己发送的消息（默认只翻译他人消息）",
+        default: false,
     },
 });
