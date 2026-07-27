@@ -10,8 +10,17 @@ import { settings } from "./settings";
 const FluxDispatcher = findByPropsLazy("dispatch", "subscribe");
 
 const cache = new Map<string, string>();
+const MAX_CACHE_SIZE = 200;
 const MIN_CHARS = 3;
 const DEBOUNCE_MS = 500;
+
+function cacheSet(key: string, value: string) {
+    if (cache.size >= MAX_CACHE_SIZE) {
+        const oldest = cache.keys().next().value;
+        if (oldest !== undefined) cache.delete(oldest);
+    }
+    cache.set(key, value);
+}
 
 function langLabel(code: string): string {
     return TARGET_LANGUAGES.find(l => l.code === code)?.label ?? code;
@@ -57,21 +66,27 @@ function Panel({ channelId }: { channelId: string; }) {
             setTranslation(cached);
             return;
         }
+        let cancelled = false;
         const handle = setTimeout(async () => {
             setLoading(true);
             try {
                 const result = await translateWithDeepSeek(draft, targetLang);
+                if (cancelled) return;
                 if (result) {
-                    cache.set(key, result);
+                    cacheSet(key, result);
                     setTranslation(result);
                 }
             } catch (e) {
+                if (cancelled) return;
                 console.error("[AiTranslate] live", e);
             } finally {
-                setLoading(false);
+                if (!cancelled) setLoading(false);
             }
         }, DEBOUNCE_MS);
-        return () => clearTimeout(handle);
+        return () => {
+            cancelled = true;
+            clearTimeout(handle);
+        };
     }, [draft, targetLang]);
 
     if (!draft || draft.length < MIN_CHARS) return null;

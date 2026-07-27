@@ -73,6 +73,14 @@ const SPOILER: React.CSSProperties = {
     padding: "0 2px",
 };
 
+const BLOCKQUOTE: React.CSSProperties = {
+    borderLeft: "4px solid var(--background-modifier-accent, #4e5058)",
+    paddingLeft: "8px",
+    color: "var(--text-muted)",
+    display: "block",
+    margin: "4px 0",
+};
+
 function parseInline(text: string, keyGen: { n: number }): React.ReactNode[] {
     const result: React.ReactNode[] = [];
     let i = 0;
@@ -100,7 +108,8 @@ function parseInline(text: string, keyGen: { n: number }): React.ReactNode[] {
 
         const innerStart = i + bestRule.prefix.length;
         const innerText = text.slice(innerStart, bestEnd);
-        const children = parseInline(innerText, keyGen);
+        const noParse = bestRule.tag === "pre" || bestRule.tag === "code";
+        const children = noParse ? [innerText] : parseInline(innerText, keyGen);
 
         if (bestRule.tag === "pre") {
             result.push(
@@ -128,14 +137,39 @@ function parseMarkdown(text: string): React.ReactNode {
         <>
             {paragraphs.map((para, pi) => {
                 const lines = para.split("\n");
+
+                const isBlockquote = lines.every(l => l.trimStart().startsWith("> ") || l.trimStart().startsWith(">>> "));
+
+                const content = (
+                    <>
+                        {lines.map((line, li) => {
+                            let stripped = line;
+                            if (isBlockquote) {
+                                stripped = stripped.replace(/^>\s/, "").replace(/^>>>\s/, "");
+                            }
+                            return (
+                                <span key={li}>
+                                    {li > 0 && <br />}
+                                    {parseInline(stripped, keyGen)}
+                                </span>
+                            );
+                        })}
+                    </>
+                );
+
+                if (isBlockquote) {
+                    return (
+                        <div key={pi} style={{ marginBottom: pi < paragraphs.length - 1 ? "8px" : 0 }}>
+                            <blockquote style={BLOCKQUOTE}>
+                                {content}
+                            </blockquote>
+                        </div>
+                    );
+                }
+
                 return (
                     <div key={pi} style={{ marginBottom: pi < paragraphs.length - 1 ? "8px" : 0 }}>
-                        {lines.map((line, li) => (
-                            <span key={li}>
-                                {li > 0 && <br />}
-                                {parseInline(line, keyGen)}
-                            </span>
-                        ))}
+                        {content}
                     </div>
                 );
             })}

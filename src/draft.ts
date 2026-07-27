@@ -47,8 +47,9 @@ export function setDraft(channelId: string, text: string): void {
     el.focus();
 
     try {
-        const fullRange = SlateEditor.range(editor, []);
-        SlateTransforms.select(editor, fullRange);
+        const start = SlateEditor.start(editor, []);
+        const end = SlateEditor.end(editor, []);
+        SlateTransforms.select(editor, { anchor: start, focus: end });
         SlateTransforms.insertText(editor, text);
     } catch (e) {
         console.error("[AiTranslate] Slate transforms failed", e);

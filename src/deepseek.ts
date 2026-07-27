@@ -17,7 +17,7 @@ export async function translateWithDeepSeek(text: string, targetLang: string): P
         messages: [
             {
                 role: "system",
-                content: `You are a professional translator. Translate the user's text into ${targetLang}. Output only the translation, no explanations, no quotes, no additional text. Preserve all Markdown formatting exactly as-is, including **bold**, *italic*, __underline__, ~~strikethrough~~, \`inline code\`, \`\`\`code blocks\`\`\`, ||spoiler||, > blockquotes, and list markers. Keep all line breaks and blank lines unchanged.`,
+                content: `You are a professional translator. Translate the user's text into ${targetLang}. Output only the translation, no explanations, no quotes, no additional text. Follow the punctuation of the original text strictly for sentence boundaries — do not merge or split sentences differently from the source. Preserve all Markdown formatting exactly as-is, including **bold**, *italic*, __underline__, ~~strikethrough~~, \`inline code\`, \`\`\`code blocks\`\`\`, ||spoiler||, > blockquotes, and list markers. Keep all line breaks and blank lines unchanged.`,
             },
             { role: "user", content: text },
         ],
@@ -40,7 +40,13 @@ export async function translateWithDeepSeek(text: string, targetLang: string): P
         throw new Error(`DeepSeek API error ${status}`);
     }
 
-    const json = JSON.parse(data);
+    let json: any;
+    try {
+        json = JSON.parse(data);
+    } catch {
+        showToast(`翻译返回非 JSON 数据: ${data.slice(0, 120)}`, Toasts.Type.FAILURE);
+        throw new Error("Invalid JSON response");
+    }
     const out = json.choices?.[0]?.message?.content?.trim();
     if (!out) {
         showToast("翻译返回空内容", Toasts.Type.FAILURE);
